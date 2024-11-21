@@ -10,12 +10,8 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env"`
-	StoragePath string `yaml:"storage_path"`
-	HTTPServer  string `yaml:"http_server"`
-}
-
-type HTTPServer struct {
+	Env         string        `yaml:"env"`
+	StoragePath string        `yaml:"storage_path"`
 	Addr        string        `yaml:"address"`
 	Timeout     time.Duration `yaml:"timeout"`
 	IdleTimeout time.Duration `yaml:"idle_timeout"`
