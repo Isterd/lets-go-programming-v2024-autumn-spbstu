@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -86,6 +87,7 @@ func getContacts(db *sql.DB) http.HandlerFunc {
 		if err := rows.Err(); err != nil {
 			log.Fatal(err)
 		}
+		json.NewEncoder(w).Encode(contacts)
 	}
 }
 
@@ -99,11 +101,51 @@ func getContact(db *sql.DB) http.HandlerFunc {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		json.NewEncoder(w).Encode(contact)
 	}
 }
 
 func createContact(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var contact Contact
+		json.NewDecoder(r.Body).Decode(&contact)
 
+		err := db.QueryRow("INSERT INTO contacts (name, phone) VALUES ($1,$2) RETURNING id", contact.name, contact.phone).Scan(&contact.id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json.NewEncoder(w).Encode(contact)
+	}
+}
+
+func updateContact(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var contact Contact
+		json.NewDecoder(r.Body).Decode(&contact)
+
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		_, err := db.Exec("UPDATE contacts SET name = $1, phone = $2 WHERE id = $3", contact.name, contact.phone, id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json.NewEncoder(w).Encode(contact)
+	}
+}
+
+func deleteContact(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		id := params["id"]
+		_, err := db.Exec("DELETE FROM contacts WHERE id = $1", id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json.NewEncoder(w).Encode("Contact deleted")
 	}
 }
