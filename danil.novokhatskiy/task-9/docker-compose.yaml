@@ -7,7 +7,7 @@ services:
     environment:
       DATABASE_URL: "host=localhost user=postgres password=postgres dbname=postgres sslmode=disable"
     ports:
-      - "8080:8080"
+      - "8000:8000"
     depends_on:
       - go_db
   go_db:

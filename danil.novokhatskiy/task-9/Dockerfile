@@ -1,12 +1,12 @@
 FROM golang:1.23
 
-WORKDIR /app
+WORKDIR /task-9
 
 COPY . .
 
-RUN go get -d v ./...
+RUN go get -v ./...
 
-RUN go build -o github.com/katagiriwhy/task-9 .
+RUN go build -o api ./cmd/service/main.go
 
 EXPOSE 8000
 

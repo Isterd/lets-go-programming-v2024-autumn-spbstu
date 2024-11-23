@@ -3,41 +3,41 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/katagiriwhy/task-9/internal/config"
-	"github.com/katagiriwhy/task-9/internal/storage"
+	_ "github.com/lib/pq"
 )
 
 type Contact struct {
-	id    int
-	name  string
-	phone string
-}
-
-var testTable []Contact = []Contact{
-	{
-		id:    1,
-		name:  "Nikita",
-		phone: "89289019785",
-	},
-	{
-		id:    2,
-		name:  "",
-		phone: "",
-	},
+	id    int    `json:"id"`
+	name  string `json:"name"`
+	phone string `json:"phone"`
 }
 
 func main() {
 
-	pathOfCfg := config.ReadFlag()
+	//pathOfCfg := config.ReadFlag()
 
-	cfgDB := storage.Load("/home/danil/lets-go-programming-v2024-autumn-spbstu/danil.novokhatskiy/task-9/internal/storage/config.yaml")
+	//cfgDB := storage.Load("/home/danil/lets-go-programming-v2024-autumn-spbstu/danil.novokhatskiy/task-9/internal/storage/config.yaml")
 
-	db, err := storage.NewStorage(cfgDB)
+	//db, err := storage.NewStorage(cfgDB)
+	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	//_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
+	_, err = db.Query("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Query("INSERT INTO contacts (name, phone) VALUES ($1, $2)", "danil", "some numbers")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,20 +45,15 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/contacts", getContacts(db)).Methods("GET")
 	router.HandleFunc("contacts/{id}", getContact(db)).Methods("GET")
-	router.HandleFunc("/users", createContact(db)).Methods("POST")
-	router.HandleFunc("/users/{id}", updateContact(db)).Methods("PUT")
+	router.HandleFunc("/contacts", createContact(db)).Methods("POST")
+	router.HandleFunc("/contacts/{id}", updateContact(db)).Methods("PUT")
 	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")
 
-	defer db.Db.Close()
+	log.Fatal(http.ListenAndServe(":8000", router))
 
-	_, err = db.Db.Exec("CREATE TABLE IF NOT EXISTS Contacts(name TEXT NOT NULL, phone TEXT NOT NULL)")
-	if err != nil {
-		log.Fatal(err)
-	}
+	/*cfg := config.LoadConfig(pathOfCfg)
 
-	cfg := config.LoadConfig(pathOfCfg)
-
-	fmt.Println(cfg)
+	fmt.Println(cfg)*/
 
 }
 
