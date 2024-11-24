@@ -3,7 +3,6 @@ version: '3.7'
 services:
   go-app:
     container_name: go-app
-    image: danil/go-app:1.0.1
     build: .
     environment:
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
