@@ -1,4 +1,4 @@
-FROM golang:1.23
+FROM golang:1.16.3-alpine3.13
 
 WORKDIR /task-9
 

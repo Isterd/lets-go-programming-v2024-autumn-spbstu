@@ -11,9 +11,9 @@ import (
 )
 
 type Contact struct {
-	id    int    `json:"id"`
-	name  string `json:"name"`
-	phone string `json:"phone"`
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
 }
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 	defer db.Close()
 
 	//_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
-	_, err = db.Query("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
 
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +49,7 @@ func main() {
 	router.HandleFunc("/contacts/{id}", updateContact(db)).Methods("PUT")
 	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":8000", jsonContentTypeMiddware(router)))
 
 	/*cfg := config.LoadConfig(pathOfCfg)
 
@@ -74,7 +74,7 @@ func getContacts(db *sql.DB) http.HandlerFunc {
 		contacts := []Contact{}
 		for rows.Next() {
 			var contact Contact
-			if err := rows.Scan(&contact.name, &contact.phone); err != nil {
+			if err := rows.Scan(&contact.Name, &contact.Phone); err != nil {
 				log.Fatal(err)
 			}
 			contacts = append(contacts, contact)
@@ -92,7 +92,7 @@ func getContact(db *sql.DB) http.HandlerFunc {
 		id := params["id"]
 		var contact Contact
 
-		err := db.QueryRow("SELECT name FROM Contacts WHERE id = $1", id).Scan(&contact.id, &contact.name, &contact.phone)
+		err := db.QueryRow("SELECT name FROM Contacts WHERE id = $1", id).Scan(&contact.ID, &contact.Name, &contact.Phone)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -106,7 +106,7 @@ func createContact(db *sql.DB) http.HandlerFunc {
 		var contact Contact
 		json.NewDecoder(r.Body).Decode(&contact)
 
-		err := db.QueryRow("INSERT INTO contacts (name, phone) VALUES ($1,$2) RETURNING id", contact.name, contact.phone).Scan(&contact.id)
+		err := db.QueryRow("INSERT INTO contacts (name, phone) VALUES ($1,$2) RETURNING id", contact.Name, contact.Phone).Scan(&contact.ID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -123,7 +123,7 @@ func updateContact(db *sql.DB) http.HandlerFunc {
 		vars := mux.Vars(r)
 		id := vars["id"]
 
-		_, err := db.Exec("UPDATE contacts SET name = $1, phone = $2 WHERE id = $3", contact.name, contact.phone, id)
+		_, err := db.Exec("UPDATE contacts SET name = $1, phone = $2 WHERE id = $3", contact.Name, contact.Phone, id)
 		if err != nil {
 			log.Fatal(err)
 		}
