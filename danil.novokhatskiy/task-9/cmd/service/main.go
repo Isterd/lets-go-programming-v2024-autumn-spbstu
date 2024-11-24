@@ -49,7 +49,7 @@ func main() {
 	router.HandleFunc("/contacts/{id}", updateContact(db)).Methods("PUT")
 	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8000", jsonContentTypeMiddware(router)))
+	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddware(router)))
 
 	/*cfg := config.LoadConfig(pathOfCfg)
 
