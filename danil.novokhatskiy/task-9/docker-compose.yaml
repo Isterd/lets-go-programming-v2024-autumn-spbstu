@@ -5,9 +5,9 @@ services:
     container_name: go-app
     build: .
     environment:
-      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:postgres@go_db:5432/postgres?sslmode=disable"
     ports:
-      - "8080:80"
+      - "8080:8080"
     depends_on:
       - go_db
   go_db:

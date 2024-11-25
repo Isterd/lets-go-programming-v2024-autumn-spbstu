@@ -23,7 +23,7 @@ func main() {
 	//cfgDB := storage.Load("/home/danil/lets-go-programming-v2024-autumn-spbstu/danil.novokhatskiy/task-9/internal/storage/config.yaml")
 
 	//db, err := storage.NewStorage(cfgDB)
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:postgres@go_db:5432/postgres?sslmode=disable")
 
 	if err != nil {
 		log.Fatal(err)
@@ -32,6 +32,11 @@ func main() {
 	defer db.Close()
 
 	//_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
+	_, err = db.Exec("GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
 
 	if err != nil {
@@ -49,7 +54,7 @@ func main() {
 	router.HandleFunc("/contacts/{id}", updateContact(db)).Methods("PUT")
 	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddware(router)))
+	//log.Fatal(http.ListenAndServe("localhost:8080", jsonContentTypeMiddware(router)))
 
 	/*cfg := config.LoadConfig(pathOfCfg)
 
