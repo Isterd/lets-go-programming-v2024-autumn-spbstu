@@ -23,7 +23,7 @@ func main() {
 	//cfgDB := storage.Load("/home/danil/lets-go-programming-v2024-autumn-spbstu/danil.novokhatskiy/task-9/internal/storage/config.yaml")
 
 	//db, err := storage.NewStorage(cfgDB)
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@go_db:5432/postgres?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 
 	if err != nil {
 		log.Fatal(err)
