@@ -29,10 +29,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 
-	//_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
-	_, err = db.Exec("GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres")
+	//_, err = db.Exec("GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres")
 	if err != nil {
 		log.Fatal(err)
 	}

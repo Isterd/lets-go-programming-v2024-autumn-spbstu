@@ -4,7 +4,7 @@ WORKDIR /task-9
 
 COPY . .
 
-RUN go get -v ./...
+RUN go get -d -v ./...
 
 RUN go build -o api ./cmd/service/main.go
 
