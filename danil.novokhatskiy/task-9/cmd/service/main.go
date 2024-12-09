@@ -2,11 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
-	"net/http"
 
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
@@ -23,7 +20,7 @@ func main() {
 	//cfgDB := storage.Load("/home/danil/lets-go-programming-v2024-autumn-spbstu/danil.novokhatskiy/task-9/internal/storage/config.yaml")
 
 	//db, err := storage.NewStorage(cfgDB)
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	db, err := sql.Open("postgres", "go_db://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +38,14 @@ func main() {
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS contacts(id SERIAL PRIMARY KEY, name TEXT, phone TEXT)")
 
+	/*rows, err := db.Query("SELECT * FROM contacts")
+
+	for rows.Next() {
+		var contact Contact
+		rows.Scan(&contact.ID, &contact.Name, &contact.Phone)
+		fmt.Println(contact)
+	}*/
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,19 +53,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
-	router := mux.NewRouter()
+/*	router := mux.NewRouter()
 	router.HandleFunc("/contacts", getContacts(db)).Methods("GET")
 	router.HandleFunc("contacts/{id}", getContact(db)).Methods("GET")
 	router.HandleFunc("/contacts", createContact(db)).Methods("POST")
 	router.HandleFunc("/contacts/{id}", updateContact(db)).Methods("PUT")
-	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")
+	router.HandleFunc("/contacts/{id}", deleteContact(db)).Methods("DELETE")*/
 
-	//log.Fatal(http.ListenAndServe("localhost:8080", jsonContentTypeMiddware(router)))
+//log.Fatal(http.ListenAndServe("localhost:8080", jsonContentTypeMiddware(router)))
 
-	/*cfg := config.LoadConfig(pathOfCfg)
+/*cfg := config.LoadConfig(pathOfCfg)
 
-	fmt.Println(cfg)*/
+	fmt.Println(cfg)
 
 }
 
@@ -150,4 +156,4 @@ func deleteContact(db *sql.DB) http.HandlerFunc {
 
 		json.NewEncoder(w).Encode("Contact deleted")
 	}
-}
+}*/
